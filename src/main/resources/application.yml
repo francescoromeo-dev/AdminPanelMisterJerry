@@ -1,0 +1,21 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: adminControlPanel
+  datasource:
+    driver-class-name: org.postgresql.Driver 
+    url: jdbc:postgresql://localhost:5432/adminControlPanel
+    username: postgres
+    password: 2523
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true

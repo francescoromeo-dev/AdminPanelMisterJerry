@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="it" xmlns:th="https://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shoes manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/shoes-manager-style.css">
+  </head>
+  <body>
+
+    <div class="container-my-4">
+        <h1 class="text-center mb-3">Lista delle scarpe</h1>
+        
+        <!-- SEZIONE FILTRI -->
+        <div class="filters-section">
+          <form method="get" action="/shoes" class="filters-form">
+            <div class="filters-row">
+              <div class="filter-group">
+                <label for="season">Stagione:</label>
+                <select name="season" id="season" class="filter-select">
+                  <option value="">Tutte le stagioni</option>
+                  <option value="Autunno/Inverno" th:selected="${param.season != null and param.season[0] == 'Autunno/Inverno'}">Autunno/Inverno</option>
+                  <option value="Primavera/Estate" th:selected="${param.season != null and param.season[0] == 'Primavera/Estate'}">Primavera/Estate</option>
+                </select>
+              </div>
+              
+              <div class="filter-group">
+                <label for="category">Categoria:</label>
+                <select name="category" id="category" class="filter-select">
+                  <option value="">Tutte le categorie</option>
+                  <option value="Primi passi" th:selected="${param.category != null and param.category[0] == 'Primi passi'}">Primi passi</option>
+                  <option value="Cerimonia bambini" th:selected="${param.category != null and param.category[0] == 'Cerimonia bambini'}">Cerimonia bambini</option>
+                  <option value="Bambini" th:selected="${param.category != null and param.category[0] == 'Bambini'}">Bambini</option>
+                </select>
+              </div>
+              
+              <div class="filter-actions">
+                <button type="submit" class="btn btn-filter">Filtra</button>
+                <a href="/shoes" class="btn btn-reset">Reset</a>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- PULSANTE AGGIUNGI -->
+        <div class="action-section">
+          <a class="btn btn-primary" href="/shoes/shoes-create">Aggiungi nuova scarpa</a>
+          
+          <!-- CONTATORE RISULTATI -->
+          <div class="results-count">
+            <span th:text="'Trovate ' + ${shoes.size()} + ' scarpe'">Trovate X scarpe</span>
+          </div>
+        </div>
+
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Immagine</th>
+              <th>Codice scarpa</th>
+              <th>Stagione</th>
+              <th>Categoria</th>
+              <th>Data di creazione</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr th:each="shoes : ${shoes}">
+              <td th:text="${shoes.id}"></td>
+              
+              <!-- Visualizzazione immagine -->
+              <td>
+                <img th:if="${shoes.imageFileName != null and !#strings.isEmpty(shoes.imageFileName)}" 
+                     th:src="@{'/images/' + ${shoes.imageFileName}}" 
+                     alt="Foto scarpa" 
+                     class="shoe-image">
+                
+                <div th:unless="${shoes.imageFileName != null and !#strings.isEmpty(shoes.imageFileName)}" 
+                     class="no-image">
+                  Nessuna<br>immagine
+                </div>
+              </td>
+              
+              <td th:text="${shoes.code}"></td>
+              <td th:text="${shoes.season}"></td>
+              <td th:text="${shoes.category}"></td>
+              <td th:text="${shoes.createdAt.toString().substring(0,10)}"></td>
+
+              <td style="white-space:nowrap">
+                <a class="btn btn-primary btn-sm" th:href="@{/shoes/shoes-edit(id=${shoes.id})}">
+                  Modifica
+                </a>
+
+                <a class="btn btn-danger btn-sm" th:href="@{/shoes/delete(id=${shoes.id})}" onclick="return confirm('Sei sicuro di voler eliminare questa scarpa?')">
+                  Elimina
+                </a>
+              </td>
+            </tr>
+            
+            <!-- MESSAGGIO NESSUN RISULTATO -->
+            <tr th:if="${shoes.isEmpty()}">
+              <td colspan="7" class="no-results">
+                <div class="no-results-content">
+                  <span>📭</span>
+                  <p>Nessuna scarpa trovata con i filtri selezionati</p>
+                  <a href="/shoes" class="btn btn-reset btn-sm">Rimuovi filtri</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/shoes-create-style.css">
+    <script src="/js/shoes-create-script.js" defer></script>
+</head>
+
+<body>
+    <div class="container-my-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto rounded border p-4">
+                <h2 class="text-center mb-5">Nuova scarpa</h2>
+                <!-- IMPORTANTE: aggiunto enctype="multipart/form-data" per l'upload -->
+                <form method="post" action="/shoes/shoes-create" enctype="multipart/form-data" th:object="${shoesDto}">
+
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Codice scarpa</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" th:field="*{code}">
+                            <p th:if="${#fields.hasErrors('code')}" class="text-danger"
+                                th:errors="*{code}"></p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Stagione</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" th:field="*{season}">
+                                <option value="">Seleziona stagione...</option>
+                                <option value="Autunno/Inverno">Autunno/Inverno</option>
+                                <option value="Primavera/Estate">Primavera/Estate</option>
+                            </select>
+                            <p th:if="${#fields.hasErrors('season')}" class="text-danger"
+                                th:errors="*{season}"></p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Categoria</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" th:field="*{category}">
+                                <option value="">Seleziona categoria...</option>
+                                <option value="Primi passi">Primi passi</option>
+                                <option value="Cerimonia bambini">Cerimonia bambini</option>
+                                <option value="Bambini">Bambini</option>
+                            </select>
+                            <p th:if="${#fields.hasErrors('category')}" class="text-danger"
+                                th:errors="*{category}"></p>
+                        </div>
+                    </div>
+
+                    <!-- Campo per l'upload dell'immagine con anteprima -->
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Immagine</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="file" th:field="*{imageFile}" accept="image/*" id="imageInput">
+                            <p th:if="${#fields.hasErrors('imageFile')}" class="text-danger"
+                                th:errors="*{imageFile}"></p>
+                            
+                            <!-- Container per l'anteprima dell'immagine -->
+                            <div class="preview-container">
+                                <img id="imagePreview" class="image-preview" alt="Anteprima immagine">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="offset-sm-4 col-sm-4 d-grid">
+                            <button type="submit" class="btn btn-primary">Conferma</button>
+                        </div>
+                        <div class="col-sm-4 d-grid">
+                            <a class="btn btn-outline-primary" href="/shoes">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

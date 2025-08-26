@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="/css/login-style.css">
+    <script src="/js/login-script.js" defer></script>
+</head>
+
+<body>
+    <section>
+        <form action="/req/login" method="post">
+            <h1>Login</h1>
+            <div class="dialog-row">
+                <label th:if="${param.error}" th:text="${session['SPRING_SECURITY_LAST_EXCEPTION'].message}"
+                    class="text-center redText"></label>
+            </div>
+            <div class="inputbox">
+                <input name="username" id="username" type="text" required>
+                <label for="username">username</label>
+                <ion-icon name="person-outline"></ion-icon>
+            </div>
+            <div class="inputbox">
+                <input name="password" type="password" id="password" required>
+                <label for="password">Password</label>
+                <ion-icon name="lock-closed-outline"></ion-icon>
+            </div>
+            <button type="submit">Log in</button>
+        </form>
+    </section>
+</body>
+
+</html>
