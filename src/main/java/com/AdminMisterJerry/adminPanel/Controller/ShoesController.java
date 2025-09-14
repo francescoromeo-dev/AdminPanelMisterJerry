@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -31,18 +32,40 @@ public class ShoesController {
     private ShoesRepository shoesRepo;
 
     @GetMapping({ "", "/" })
-    public String getShoes(@RequestParam(required = false) String season, @RequestParam(required = false) String category,Model model) {
+    public String getShoes(@RequestParam(required = false) String season, 
+                          @RequestParam(required = false) String category,
+                          @RequestParam(required = false) String color,
+                          Model model) {
         
         List<Shoes> shoes;
-        if (season != null && !season.isEmpty() && category != null && !category.isEmpty()) {
-            // Entrambi i filtri attivi
+        
+        // Logica filtri aggiornata con colore
+        if (season != null && !season.isEmpty() && 
+            category != null && !category.isEmpty() && 
+            color != null && !color.isEmpty()) {
+            // Tutti e tre i filtri attivi
+            shoes = shoesRepo.findBySeasonAndCategoryAndColorOrderByIdDesc(season, category, color);
+        } else if (season != null && !season.isEmpty() && 
+                   category != null && !category.isEmpty()) {
+            // Filtri stagione + categoria
             shoes = shoesRepo.findBySeasonAndCategoryOrderByIdDesc(season, category);
+        } else if (season != null && !season.isEmpty() && 
+                   color != null && !color.isEmpty()) {
+            // Filtri stagione + colore
+            shoes = shoesRepo.findBySeasonAndColorOrderByIdDesc(season, color);
+        } else if (category != null && !category.isEmpty() && 
+                   color != null && !color.isEmpty()) {
+            // Filtri categoria + colore
+            shoes = shoesRepo.findByCategoryAndColorOrderByIdDesc(category, color);
         } else if (season != null && !season.isEmpty()) {
             // Solo filtro stagione
             shoes = shoesRepo.findBySeasonOrderByIdDesc(season);
         } else if (category != null && !category.isEmpty()) {
             // Solo filtro categoria
             shoes = shoesRepo.findByCategoryOrderByIdDesc(category);
+        } else if (color != null && !color.isEmpty()) {
+            // Solo filtro colore
+            shoes = shoesRepo.findByColorOrderByIdDesc(color);
         } else {
             // Nessun filtro, mostra tutte
             shoes = shoesRepo.findAll(Sort.by(Sort.Direction.DESC, "id"));
@@ -64,11 +87,19 @@ public class ShoesController {
     @PostMapping("/shoes-create")
     public String createShoes(@Valid @ModelAttribute ShoesDto shoesDto, BindingResult result, Model model) {
 
-        // Verifica se il codice esiste già (solo se il codice non è null/vuoto)
-        if (shoesDto.getCode() != null && !shoesDto.getCode().isEmpty()
-                && shoesRepo.findByCode(shoesDto.getCode()) != null) {
-            result.addError(new FieldError("shoesDto", "code", shoesDto.getCode(), false, null, null,
-                    "Questo codice è già in uso"));
+        // NUOVA VALIDAZIONE: Verifica se il codice esiste già (ora deve essere univoco)
+        if (shoesDto.getCode() != null && !shoesDto.getCode().isEmpty()) {
+            Optional<Shoes> existingShoes = shoesRepo.findByCode(shoesDto.getCode());
+            if (existingShoes.isPresent()) {
+                result.addError(new FieldError("shoesDto", "code", shoesDto.getCode(), false, null, null,
+                        "Esiste già una scarpa con questo codice"));
+            }
+        }
+
+        // Validazione colori
+        if (shoesDto.getColors() == null || shoesDto.getColors().isEmpty()) {
+            result.addError(new FieldError("shoesDto", "colors", "", false, null, null,
+                    "Seleziona almeno un colore"));
         }
 
         MultipartFile image = shoesDto.getImageFile();
@@ -107,6 +138,7 @@ public class ShoesController {
         // Crea e salva la nuova scarpa
         Shoes shoes = new Shoes();
         shoes.setCode(shoesDto.getCode());
+        shoes.setColorsList(shoesDto.getColors()); // Usa il nuovo metodo per i colori multipli
         shoes.setSeason(shoesDto.getSeason());
         shoes.setCategory(shoesDto.getCategory());
         shoes.setImageFileName(storageFileName);
@@ -127,6 +159,7 @@ public class ShoesController {
 
         ShoesDto shoesDto = new ShoesDto();
         shoesDto.setCode(shoes.getCode());
+        shoesDto.setColors(shoes.getColorsList()); // Usa il nuovo metodo per ottenere i colori
         shoesDto.setSeason(shoes.getSeason());
         shoesDto.setCategory(shoes.getCategory());
 
@@ -147,6 +180,21 @@ public class ShoesController {
         }
 
         model.addAttribute("shoes", shoes);
+
+        // NUOVA VALIDAZIONE: Controlla se il codice esiste già (escluso l'elemento corrente)
+        if (shoesDto.getCode() != null && !shoesDto.getCode().isEmpty()) {
+            Optional<Shoes> existingShoes = shoesRepo.findByCode(shoesDto.getCode());
+            if (existingShoes.isPresent() && existingShoes.get().getId() != id) {
+                result.addError(new FieldError("shoesDto", "code", shoesDto.getCode(), false, null, null,
+                        "Esiste già una scarpa con questo codice"));
+            }
+        }
+
+        // Validazione colori
+        if (shoesDto.getColors() == null || shoesDto.getColors().isEmpty()) {
+            result.addError(new FieldError("shoesDto", "colors", "", false, null, null,
+                    "Seleziona almeno un colore"));
+        }
 
         if (result.hasErrors()) {
             return "shoes/shoes-edit";
@@ -190,16 +238,11 @@ public class ShoesController {
 
         // Aggiorna i dettagli delle scarpe
         shoes.setCode(shoesDto.getCode());
+        shoes.setColorsList(shoesDto.getColors()); // Usa il nuovo metodo per i colori multipli
         shoes.setSeason(shoesDto.getSeason());
         shoes.setCategory(shoesDto.getCategory());
 
-        try {
-            shoesRepo.save(shoes);
-        } catch (Exception e) {
-            result.addError(new FieldError("shoesDto", "code", shoesDto.getCode(), false, null, null,
-                    "Questo codice è già in uso"));
-            return "shoes/shoes-edit";
-        }
+        shoesRepo.save(shoes);
 
         return "redirect:/shoes";
     }

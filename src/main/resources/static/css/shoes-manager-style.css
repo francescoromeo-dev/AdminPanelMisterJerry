@@ -9,7 +9,7 @@ body {
 
 /* Correzione per la classe container-my-4 */
 .container-my-4 {
-  max-width: 1200px;
+  max-width: 1400px; /* Aumentato da 1200px */
   margin: 0 auto;
   padding: 3rem 2rem;
   min-height: 100vh;
@@ -47,33 +47,36 @@ h1 {
   color: white;
 }
 
-/* Styling per la tabella */
+/* Styling per la tabella - MIGLIORATO */
 .table {
   background: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border: 1px solid #f0f0f0;
+  font-size: 1rem; /* Aumentato da default */
 }
 
 .table thead th {
   background: #f8f9fa;
   color: #6b7280;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.9rem; /* Aumentato da 0.85rem */
   letter-spacing: 0.05em;
   border: none;
-  padding: 1.25rem 1.5rem;
+  padding: 1.5rem 2rem; /* Aumentato padding */
   border-bottom: 1px solid #e5e7eb;
   text-transform: uppercase;
 }
 
 .table tbody td {
-  padding: 1.25rem 1.5rem;
+  padding: 1.75rem 2rem; /* Aumentato significativamente il padding */
   vertical-align: middle;
   border-color: #f0f0f0;
   color: #374151;
   font-weight: 400;
+  font-size: 1rem; /* Dimensione font esplicita */
+  line-height: 1.5;
 }
 
 .table tbody tr {
@@ -88,10 +91,10 @@ h1 {
   border-bottom: none;
 }
 
-/* Styling per le immagini delle scarpe */
+/* Styling per le immagini delle scarpe - MIGLIORATO */
 .shoe-image {
-  width: 50px;
-  height: 50px;
+  width: 70px; /* Aumentato da 50px */
+  height: 70px; /* Aumentato da 50px */
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
@@ -104,29 +107,130 @@ h1 {
 }
 
 .no-image {
-  width: 50px;
-  height: 50px;
+  width: 70px; /* Aumentato da 50px */
+  height: 70px; /* Aumentato da 50px */
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f9fafb;
   border: 1px dashed #d1d5db;
   border-radius: 8px;
-  font-size: 0.7rem;
+  font-size: 0.75rem; /* Leggermente aumentato */
   color: #9ca3af;
   text-align: center;
   line-height: 1.2;
 }
 
+/* NUOVI STILI PER LA VISUALIZZAZIONE COLORI */
+.colors-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.color-tag {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  position: relative;
+}
+
+/* Aggiunge virgola dopo ogni tag colore eccetto l'ultimo */
+.color-tag:not(:last-child)::after {
+  content: ",";
+  position: absolute;
+  right: -0.3rem;
+  color: #6b7280;
+}
+
+/* Colori specifici per i tag */
+.color-tag.color-nero {
+  background: #1f2937;
+  color: white;
+  border-color: #374151;
+}
+
+.color-tag.color-marrone {
+  background: #92400e;
+  color: white;
+  border-color: #b45309;
+}
+
+.color-tag.color-blu {
+  background: #1e40af;
+  color: white;
+  border-color: #2563eb;
+}
+
+.color-tag.color-rosso {
+  background: #dc2626;
+  color: white;
+  border-color: #ef4444;
+}
+
+.color-tag.color-bianco {
+  background: #ffffff;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.color-tag.color-grigio {
+  background: #6b7280;
+  color: white;
+  border-color: #9ca3af;
+}
+
+.color-tag.color-beige {
+  background: #d2b48c;
+  color: #374151;
+  border-color: #c4a678;
+}
+
+.color-tag.color-verde {
+  background: #16a34a;
+  color: white;
+  border-color: #22c55e;
+}
+
+.color-tag.color-rosa {
+  background: #ec4899;
+  color: white;
+  border-color: #f472b6;
+}
+
+.color-tag.color-giallo {
+  background: #eab308;
+  color: #374151;
+  border-color: #facc15;
+}
+
+.color-tag.color-default {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+
+.no-colors {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 /* Pulsanti di azione - stesso livello */
 .btn-sm {
-  padding: 6px 16px;
-  font-size: 0.8rem;
+  padding: 8px 20px; /* Aumentato padding */
+  font-size: 0.85rem; /* Leggermente aumentato */
   border-radius: 6px;
   font-weight: 500;
   letter-spacing: 0.01em;
   transition: all 0.15s ease;
-  margin-right: 8px;
+  margin-right: 10px; /* Aumentato margine */
   display: inline-block;
   vertical-align: top;
   border: 1px solid transparent;
@@ -165,10 +269,11 @@ td[style*="white-space:nowrap"] {
   white-space: nowrap !important;
 }
 
-/* Responsive design */
+/* Responsive design - AGGIORNATO */
 @media (max-width: 768px) {
   .container-my-4 {
     padding: 2rem 1rem;
+    max-width: 100%;
   }
   
   h1 {
@@ -185,16 +290,21 @@ td[style*="white-space:nowrap"] {
   }
   
   .btn-sm {
-    padding: 5px 12px;
+    padding: 6px 14px;
     font-size: 0.75rem;
-    margin-right: 4px;
+    margin-right: 6px;
     margin-bottom: 4px;
   }
   
   .shoe-image,
   .no-image {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .color-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
   }
 }
 

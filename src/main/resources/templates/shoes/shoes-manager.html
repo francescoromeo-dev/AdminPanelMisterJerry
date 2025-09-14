@@ -34,6 +34,25 @@
                   <option value="Bambini" th:selected="${param.category != null and param.category[0] == 'Bambini'}">Bambini</option>
                 </select>
               </div>
+
+              <!-- FILTRO COLORE -->
+              <div class="filter-group">
+                <label for="color">Colore:</label>
+                <select name="color" id="color" class="filter-select">
+                  <option value="">Tutti i colori</option>
+                  <option value="Nero" th:selected="${param.color != null and param.color[0] == 'Nero'}">Nero</option>
+                  <option value="Marrone" th:selected="${param.color != null and param.color[0] == 'Marrone'}">Marrone</option>
+                  <option value="Blu" th:selected="${param.color != null and param.color[0] == 'Blu'}">Blu</option>
+                  <option value="Rosso" th:selected="${param.color != null and param.color[0] == 'Rosso'}">Rosso</option>
+                  <option value="Bianco" th:selected="${param.color != null and param.color[0] == 'Bianco'}">Bianco</option>
+                  <option value="Grigio" th:selected="${param.color != null and param.color[0] == 'Grigio'}">Grigio</option>
+                  <option value="Beige" th:selected="${param.color != null and param.color[0] == 'Beige'}">Beige</option>
+                  <option value="Verde" th:selected="${param.color != null and param.color[0] == 'Verde'}">Verde</option>
+                  <option value="Rosa" th:selected="${param.color != null and param.color[0] == 'Rosa'}">Rosa</option>
+                  <option value="Giallo" th:selected="${param.color != null and param.color[0] == 'Giallo'}">Giallo</option>
+                  <option value="Multicolore" th:selected="${param.color != null and param.color[0] == 'Multicolore'}">Multicolore</option>
+                </select>
+              </div>
               
               <div class="filter-actions">
                 <button type="submit" class="btn btn-filter">Filtra</button>
@@ -59,6 +78,7 @@
               <th>ID</th>
               <th>Immagine</th>
               <th>Codice scarpa</th>
+              <th>Colori disponibili</th> <!-- COLONNA MODIFICATA -->
               <th>Stagione</th>
               <th>Categoria</th>
               <th>Data di creazione</th>
@@ -83,6 +103,30 @@
               </td>
               
               <td th:text="${shoes.code}"></td>
+              
+              <!-- NUOVA CELLA PER I COLORI MULTIPLI -->
+              <td>
+                <div class="colors-display">
+                  <span th:each="color, iterStat : ${shoes.colorsList}" 
+                        class="color-tag"
+                        th:text="${color}"
+                        th:classappend="${color == 'Nero'} ? 'color-nero' : 
+                                       (${color == 'Marrone'} ? 'color-marrone' : 
+                                       (${color == 'Blu'} ? 'color-blu' : 
+                                       (${color == 'Rosso'} ? 'color-rosso' : 
+                                       (${color == 'Bianco'} ? 'color-bianco' : 
+                                       (${color == 'Grigio'} ? 'color-grigio' : 
+                                       (${color == 'Beige'} ? 'color-beige' : 
+                                       (${color == 'Verde'} ? 'color-verde' : 
+                                       (${color == 'Rosa'} ? 'color-rosa' : 
+                                       (${color == 'Giallo'} ? 'color-giallo' : 'color-default')))))))))">
+                  </span>
+                  <div th:if="${shoes.colorsList.empty}" class="no-colors">
+                    Nessun colore
+                  </div>
+                </div>
+              </td>
+              
               <td th:text="${shoes.season}"></td>
               <td th:text="${shoes.category}"></td>
               <td th:text="${shoes.createdAt.toString().substring(0,10)}"></td>
@@ -100,9 +144,9 @@
             
             <!-- MESSAGGIO NESSUN RISULTATO -->
             <tr th:if="${shoes.isEmpty()}">
-              <td colspan="7" class="no-results">
+              <td colspan="8" class="no-results"> <!-- Mantiene colspan="8" per le 8 colonne -->
                 <div class="no-results-content">
-                  <span>📭</span>
+                  <span>🔭</span>
                   <p>Nessuna scarpa trovata con i filtri selezionati</p>
                   <a href="/shoes" class="btn btn-reset btn-sm">Rimuovi filtri</a>
                 </div>

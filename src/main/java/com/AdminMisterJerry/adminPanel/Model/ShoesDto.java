@@ -1,5 +1,8 @@
 package com.AdminMisterJerry.adminPanel.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -8,6 +11,9 @@ public class ShoesDto {
     
     @NotEmpty(message = "Campo obbligatorio")
     private String code;
+
+    @NotEmpty(message = "Seleziona almeno un colore")
+    private List <String> colors = new ArrayList<>();
 
     @NotEmpty(message="Campo obbligatorio")
     private String season;
@@ -24,6 +30,14 @@ public class ShoesDto {
     public void setCode(String code) {
         this.code = code;
     }
+
+    public List<String> getColors(){
+        return colors;
+    }
+
+    public void setColors(List<String> colors){
+        this.colors = colors != null ? colors : new ArrayList<>();
+    } 
 
     public String getSeason() {
         return season;
@@ -46,5 +60,10 @@ public class ShoesDto {
 
     public void setImageFile(MultipartFile imageFile) {
         this.imageFile = imageFile;
+    }
+
+    //Metodo help per la validazione
+    public boolean hasColors(){
+        return colors != null && !colors.isEmpty();
     }
 }

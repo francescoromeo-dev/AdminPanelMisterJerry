@@ -35,6 +35,62 @@
                         </div>
                     </div>
 
+                    <!-- NUOVO CAMPO COLORI MULTIPLI -->
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Colori disponibili</label>
+                        <div class="col-sm-8">
+                            <div class="colors-selection">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Nero" th:field="*{colors}" id="edit-color-nero">
+                                    <label class="form-check-label" for="edit-color-nero">Nero</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Marrone" th:field="*{colors}" id="edit-color-marrone">
+                                    <label class="form-check-label" for="edit-color-marrone">Marrone</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Blu" th:field="*{colors}" id="edit-color-blu">
+                                    <label class="form-check-label" for="edit-color-blu">Blu</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Rosso" th:field="*{colors}" id="edit-color-rosso">
+                                    <label class="form-check-label" for="edit-color-rosso">Rosso</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Bianco" th:field="*{colors}" id="edit-color-bianco">
+                                    <label class="form-check-label" for="edit-color-bianco">Bianco</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Grigio" th:field="*{colors}" id="edit-color-grigio">
+                                    <label class="form-check-label" for="edit-color-grigio">Grigio</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Beige" th:field="*{colors}" id="edit-color-beige">
+                                    <label class="form-check-label" for="edit-color-beige">Beige</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Verde" th:field="*{colors}" id="edit-color-verde">
+                                    <label class="form-check-label" for="edit-color-verde">Verde</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Rosa" th:field="*{colors}" id="edit-color-rosa">
+                                    <label class="form-check-label" for="edit-color-rosa">Rosa</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Giallo" th:field="*{colors}" id="edit-color-giallo">
+                                    <label class="form-check-label" for="edit-color-giallo">Giallo</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Multicolore" th:field="*{colors}" id="edit-color-multicolore">
+                                    <label class="form-check-label" for="edit-color-multicolore">Multicolore</label>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Seleziona tutti i colori disponibili per questa scarpa</small>
+                            <p th:if="${#fields.hasErrors('colors')}" class="text-danger"
+                                th:errors="*{colors}"></p>
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Stagione</label>
                         <div class="col-sm-8">
