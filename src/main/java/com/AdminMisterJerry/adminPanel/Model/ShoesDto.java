@@ -12,16 +12,13 @@ public class ShoesDto {
     @NotEmpty(message = "Campo obbligatorio")
     private String code;
 
-    @NotEmpty(message = "Seleziona almeno un colore")
-    private List <String> colors = new ArrayList<>();
-
     @NotEmpty(message="Campo obbligatorio")
     private String season;
 
     @NotEmpty(message = "Campo obbligatorio")
     private String category;
 
-    private MultipartFile imageFile;
+    private List<MultipartFile> imageFiles = new ArrayList<>(); // Cambiato per supportare multiple immagini
 
     public String getCode() {
         return code;
@@ -30,14 +27,6 @@ public class ShoesDto {
     public void setCode(String code) {
         this.code = code;
     }
-
-    public List<String> getColors(){
-        return colors;
-    }
-
-    public void setColors(List<String> colors){
-        this.colors = colors != null ? colors : new ArrayList<>();
-    } 
 
     public String getSeason() {
         return season;
@@ -54,16 +43,31 @@ public class ShoesDto {
     public void setCategory(String category) {
         this.category = category;
     }
-    public MultipartFile getImageFile() {
-        return imageFile;
+    
+    public List<MultipartFile> getImageFiles() {
+        return imageFiles;
     }
 
-    public void setImageFile(MultipartFile imageFile) {
-        this.imageFile = imageFile;
+    public void setImageFiles(List<MultipartFile> imageFiles) {
+        this.imageFiles = imageFiles != null ? imageFiles : new ArrayList<>();
     }
 
-    //Metodo help per la validazione
-    public boolean hasColors(){
-        return colors != null && !colors.isEmpty();
+    //Metodo helper per la validazione
+    public boolean hasImages(){
+        if(imageFiles == null || imageFiles.isEmpty()) {
+            return false;
+        }
+        // Controlla se almeno un file non è vuoto
+        return imageFiles.stream().anyMatch(file -> file != null && !file.isEmpty());
+    }
+    
+    //Metodo per ottenere solo le immagini non vuote
+    public List<MultipartFile> getNonEmptyImageFiles(){
+        if(imageFiles == null) {
+            return new ArrayList<>();
+        }
+        return imageFiles.stream()
+                .filter(file -> file != null && !file.isEmpty())
+                .toList();
     }
 }

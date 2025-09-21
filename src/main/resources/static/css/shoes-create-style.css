@@ -73,7 +73,7 @@ select.form-control option {
   padding: 0.5rem;
 }
 
-/* File input */
+/* File input - aggiornato per multiple files */
 input[type="file"].form-control {
   background: white;
   cursor: pointer;
@@ -98,20 +98,54 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
   color: #1f2937;
 }
 
-/* Preview immagine */
-.image-preview {
-  max-width: 200px !important;
-  max-height: 200px !important;
-  object-fit: cover;
-  border-radius: 8px !important;
-  border: 1px solid #e5e7eb !important;
-  display: none;
-  margin-top: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+/* NUOVI STILI PER MULTIPLE IMMAGINI */
 
+/* Container per l'anteprima delle multiple immagini */
 .preview-container {
   margin-top: 1rem !important;
+  display: none; /* Inizialmente nascosto */
+}
+
+/* Wrapper per ogni singola immagine di anteprima */
+.image-preview-wrapper {
+  display: inline-block;
+  margin: 0.5rem;
+  position: relative;
+  vertical-align: top;
+}
+
+/* Stile per le immagini di anteprima */
+.image-preview {
+  max-width: 150px;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  display: block; /* Sempre visibile quando dentro il wrapper */
+}
+
+.image-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Label sotto ogni immagine */
+.image-preview-wrapper div {
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 0.25rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Testo di aiuto per i file multipli */
+.form-text.text-muted {
+  color: #9ca3af !important;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-top: 0.5rem;
 }
 
 /* Messaggi di errore */
@@ -188,6 +222,16 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
     padding: 0.75rem 1.5rem;
     margin-bottom: 0.5rem;
   }
+  
+  /* Responsive per le anteprime multiple */
+  .image-preview {
+    max-width: 120px;
+    max-height: 120px;
+  }
+  
+  .image-preview-wrapper {
+    margin: 0.25rem;
+  }
 }
 
 /* Animazione subtle */
@@ -215,7 +259,7 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
 /* Miglioramenti per la row dei form */
 .row.mb-3 {
   margin-bottom: 1.5rem !important;
-  align-items: center;
+  align-items: flex-start; /* Cambiato da center per supportare le anteprime multiple */
 }
 
 /* Stile per readonly inputs */
@@ -233,4 +277,23 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
   .offset-sm-4 {
     margin-left: 0 !important;
   }
+}
+
+/* Evidenzia la sezione upload immagini multiple */
+.row:has(input[type="file"]) {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1.5rem -1rem;
+  border: 1px solid #f0f0f0;
+}
+
+/* Stile speciale per il container delle anteprime quando è visibile */
+.preview-container[style*="display: block"] {
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-top: 1.5rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }

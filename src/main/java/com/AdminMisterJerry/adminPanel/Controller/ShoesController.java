@@ -1,10 +1,6 @@
 package com.AdminMisterJerry.adminPanel.Controller;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +14,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.AdminMisterJerry.adminPanel.Model.ImageEntity;
 import com.AdminMisterJerry.adminPanel.Model.Shoes;
 import com.AdminMisterJerry.adminPanel.Model.ShoesDto;
+import com.AdminMisterJerry.adminPanel.Repositories.ImageRepository;
 import com.AdminMisterJerry.adminPanel.Repositories.ShoesRepository;
 
 import jakarta.validation.Valid;
@@ -30,42 +28,33 @@ public class ShoesController {
 
     @Autowired
     private ShoesRepository shoesRepo;
+    
+    @Autowired
+    private ImageRepository imageRepository;
+
+    // Lista dei content type supportati per le immagini
+    private final List<String> SUPPORTED_CONTENT_TYPES = List.of(
+            "image/jpeg", "image/jpg", "image/png", "image/gif", "image/bmp", "image/webp"
+    );
 
     @GetMapping({ "", "/" })
     public String getShoes(@RequestParam(required = false) String season, 
                           @RequestParam(required = false) String category,
-                          @RequestParam(required = false) String color,
                           Model model) {
         
         List<Shoes> shoes;
         
-        // Logica filtri aggiornata con colore
+        // Logica filtri
         if (season != null && !season.isEmpty() && 
-            category != null && !category.isEmpty() && 
-            color != null && !color.isEmpty()) {
-            // Tutti e tre i filtri attivi
-            shoes = shoesRepo.findBySeasonAndCategoryAndColorOrderByIdDesc(season, category, color);
-        } else if (season != null && !season.isEmpty() && 
-                   category != null && !category.isEmpty()) {
+            category != null && !category.isEmpty()) {
             // Filtri stagione + categoria
             shoes = shoesRepo.findBySeasonAndCategoryOrderByIdDesc(season, category);
-        } else if (season != null && !season.isEmpty() && 
-                   color != null && !color.isEmpty()) {
-            // Filtri stagione + colore
-            shoes = shoesRepo.findBySeasonAndColorOrderByIdDesc(season, color);
-        } else if (category != null && !category.isEmpty() && 
-                   color != null && !color.isEmpty()) {
-            // Filtri categoria + colore
-            shoes = shoesRepo.findByCategoryAndColorOrderByIdDesc(category, color);
         } else if (season != null && !season.isEmpty()) {
             // Solo filtro stagione
             shoes = shoesRepo.findBySeasonOrderByIdDesc(season);
         } else if (category != null && !category.isEmpty()) {
             // Solo filtro categoria
             shoes = shoesRepo.findByCategoryOrderByIdDesc(category);
-        } else if (color != null && !color.isEmpty()) {
-            // Solo filtro colore
-            shoes = shoesRepo.findByColorOrderByIdDesc(color);
         } else {
             // Nessun filtro, mostra tutte
             shoes = shoesRepo.findAll(Sort.by(Sort.Direction.DESC, "id"));
@@ -87,7 +76,7 @@ public class ShoesController {
     @PostMapping("/shoes-create")
     public String createShoes(@Valid @ModelAttribute ShoesDto shoesDto, BindingResult result, Model model) {
 
-        // NUOVA VALIDAZIONE: Verifica se il codice esiste già (ora deve essere univoco)
+        // VALIDAZIONE: Verifica se il codice esiste già
         if (shoesDto.getCode() != null && !shoesDto.getCode().isEmpty()) {
             Optional<Shoes> existingShoes = shoesRepo.findByCode(shoesDto.getCode());
             if (existingShoes.isPresent()) {
@@ -96,16 +85,10 @@ public class ShoesController {
             }
         }
 
-        // Validazione colori
-        if (shoesDto.getColors() == null || shoesDto.getColors().isEmpty()) {
-            result.addError(new FieldError("shoesDto", "colors", "", false, null, null,
-                    "Seleziona almeno un colore"));
-        }
-
-        MultipartFile image = shoesDto.getImageFile();
-        if (image.isEmpty()) {
-            result.addError(
-                    new FieldError("shoesDto", "imageFile", "", false, null, null, "L'immagine è obbligatoria"));
+        // Validazione immagini
+        if (!shoesDto.hasImages()) {
+            result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null,
+                    "Carica almeno un'immagine"));
         }
 
         // Se ci sono errori, torna al form
@@ -113,35 +96,54 @@ public class ShoesController {
             return "shoes/shoes-create";
         }
 
-        String storageFileName = "";
+        List<Long> savedImageIds = new ArrayList<>();
+        
         try {
-            String uploadDir = "public/images/";
-            Path uploadPath = Paths.get(uploadDir);
+            // Salva tutte le immagini nel database
+            for (MultipartFile imageFile : shoesDto.getNonEmptyImageFiles()) {
+                
+                // Validazione formato immagine
+                String contentType = imageFile.getContentType();
+                if (contentType == null || !SUPPORTED_CONTENT_TYPES.contains(contentType)) {
+                    result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null,
+                            "Formato immagine non supportato: " + imageFile.getOriginalFilename()));
+                    return "shoes/shoes-create";
+                }
 
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+                // Validazione dimensione (max 10MB)
+                if (imageFile.getSize() > 10 * 1024 * 1024) {
+                    result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null,
+                            "File troppo grande (max 10MB): " + imageFile.getOriginalFilename()));
+                    return "shoes/shoes-create";
+                }
+
+                // Genera nome file unico
+                String fileName = generateUniqueFileName(imageFile.getOriginalFilename());
+
+                // Crea e salva l'entità immagine
+                ImageEntity imageEntity = new ImageEntity(
+                    fileName,
+                    contentType,
+                    imageFile.getBytes()
+                );
+
+                ImageEntity savedImage = imageRepository.save(imageEntity);
+                savedImageIds.add(savedImage.getId());
             }
 
-            // Genera nome file unico
-            storageFileName = new Date().getTime() + "_" + image.getOriginalFilename();
-
-            try (InputStream inputStream = image.getInputStream()) {
-                Files.copy(inputStream, Paths.get(uploadDir + storageFileName), StandardCopyOption.REPLACE_EXISTING);
-            }
         } catch (Exception e) {
-            System.out.println("Errore nel salvare l'immagine: " + e.getMessage());
-            result.addError(
-                    new FieldError("shoesDto", "imageFile", "", false, null, null, "Errore nel salvare l'immagine"));
+            System.out.println("Errore nel salvare le immagini: " + e.getMessage());
+            result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null, 
+                    "Errore nel salvare le immagini: " + e.getMessage()));
             return "shoes/shoes-create";
         }
 
         // Crea e salva la nuova scarpa
         Shoes shoes = new Shoes();
         shoes.setCode(shoesDto.getCode());
-        shoes.setColorsList(shoesDto.getColors()); // Usa il nuovo metodo per i colori multipli
         shoes.setSeason(shoesDto.getSeason());
         shoes.setCategory(shoesDto.getCategory());
-        shoes.setImageFileName(storageFileName);
+        shoes.setImageIdsList(savedImageIds); // Imposta la lista degli ID delle immagini
         shoes.setCreatedAt(new Date());
 
         shoesRepo.save(shoes);
@@ -159,7 +161,6 @@ public class ShoesController {
 
         ShoesDto shoesDto = new ShoesDto();
         shoesDto.setCode(shoes.getCode());
-        shoesDto.setColors(shoes.getColorsList()); // Usa il nuovo metodo per ottenere i colori
         shoesDto.setSeason(shoes.getSeason());
         shoesDto.setCategory(shoes.getCategory());
 
@@ -181,7 +182,7 @@ public class ShoesController {
 
         model.addAttribute("shoes", shoes);
 
-        // NUOVA VALIDAZIONE: Controlla se il codice esiste già (escluso l'elemento corrente)
+        // VALIDAZIONE: Controlla se il codice esiste già (escluso l'elemento corrente)
         if (shoesDto.getCode() != null && !shoesDto.getCode().isEmpty()) {
             Optional<Shoes> existingShoes = shoesRepo.findByCode(shoesDto.getCode());
             if (existingShoes.isPresent() && existingShoes.get().getId() != id) {
@@ -190,55 +191,69 @@ public class ShoesController {
             }
         }
 
-        // Validazione colori
-        if (shoesDto.getColors() == null || shoesDto.getColors().isEmpty()) {
-            result.addError(new FieldError("shoesDto", "colors", "", false, null, null,
-                    "Seleziona almeno un colore"));
-        }
-
         if (result.hasErrors()) {
             return "shoes/shoes-edit";
         }
 
-        MultipartFile image = shoesDto.getImageFile();
-        if (!image.isEmpty()) {
-            // Elimina la vecchia immagine
-            String uploadDir = "public/images/";
-            Path oldImagePath = Paths.get(uploadDir + shoes.getImageFileName());
-
-            try {
-                Files.deleteIfExists(oldImagePath);
-            } catch (Exception e) {
-                System.out.println("Errore nell'eliminare la vecchia immagine: " + e.getMessage());
+        // Gestione nuove immagini
+        if (shoesDto.hasImages()) {
+            // Elimina le vecchie immagini dal database
+            List<Long> oldImageIds = shoes.getImageIdsList();
+            
+            for (Long oldImageId : oldImageIds) {
+                try {
+                    imageRepository.deleteById(oldImageId);
+                } catch (Exception e) {
+                    System.out.println("Errore nell'eliminare la vecchia immagine ID " + oldImageId + ": " + e.getMessage());
+                }
             }
 
-            // Salva la nuova immagine
-            String storageFileName = "";
+            // Salva le nuove immagini
+            List<Long> newImageIds = new ArrayList<>();
             try {
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+                for (MultipartFile imageFile : shoesDto.getNonEmptyImageFiles()) {
+                    
+                    // Validazione formato immagine
+                    String contentType = imageFile.getContentType();
+                    if (contentType == null || !SUPPORTED_CONTENT_TYPES.contains(contentType)) {
+                        result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null,
+                                "Formato immagine non supportato: " + imageFile.getOriginalFilename()));
+                        return "shoes/shoes-edit";
+                    }
+
+                    // Validazione dimensione (max 10MB)
+                    if (imageFile.getSize() > 10 * 1024 * 1024) {
+                        result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null,
+                                "File troppo grande (max 10MB): " + imageFile.getOriginalFilename()));
+                        return "shoes/shoes-edit";
+                    }
+
+                    // Genera nome file unico
+                    String fileName = generateUniqueFileName(imageFile.getOriginalFilename());
+
+                    // Crea e salva l'entità immagine
+                    ImageEntity imageEntity = new ImageEntity(
+                        fileName,
+                        contentType,
+                        imageFile.getBytes()
+                    );
+
+                    ImageEntity savedImage = imageRepository.save(imageEntity);
+                    newImageIds.add(savedImage.getId());
                 }
 
-                storageFileName = new Date().getTime() + "_" + image.getOriginalFilename();
-
-                try (InputStream inputStream = image.getInputStream()) {
-                    Files.copy(inputStream, Paths.get(uploadDir + storageFileName),
-                            StandardCopyOption.REPLACE_EXISTING);
-                }
-
-                shoes.setImageFileName(storageFileName);
+                shoes.setImageIdsList(newImageIds);
+                
             } catch (Exception e) {
-                System.out.println("Errore nel salvare la nuova immagine: " + e.getMessage());
-                result.addError(new FieldError("shoesDto", "imageFile", "", false, null, null,
-                        "Errore nel salvare l'immagine"));
+                System.out.println("Errore nel salvare le nuove immagini: " + e.getMessage());
+                result.addError(new FieldError("shoesDto", "imageFiles", "", false, null, null,
+                        "Errore nel salvare le immagini: " + e.getMessage()));
                 return "shoes/shoes-edit";
             }
         }
 
         // Aggiorna i dettagli delle scarpe
         shoes.setCode(shoesDto.getCode());
-        shoes.setColorsList(shoesDto.getColors()); // Usa il nuovo metodo per i colori multipli
         shoes.setSeason(shoesDto.getSeason());
         shoes.setCategory(shoesDto.getCategory());
 
@@ -253,19 +268,38 @@ public class ShoesController {
         Shoes shoes = shoesRepo.findById(id).orElse(null);
 
         if (shoes != null) {
-            // Elimina anche l'immagine dal disco
-            String uploadDir = "public/images/";
-            Path imagePath = Paths.get(uploadDir + shoes.getImageFileName());
-
-            try {
-                Files.deleteIfExists(imagePath);
-            } catch (Exception e) {
-                System.out.println("Errore nell'eliminare l'immagine: " + e.getMessage());
+            // Elimina anche tutte le immagini dal database
+            List<Long> imageIds = shoes.getImageIdsList();
+            
+            for (Long imageId : imageIds) {
+                try {
+                    imageRepository.deleteById(imageId);
+                } catch (Exception e) {
+                    System.out.println("Errore nell'eliminare l'immagine ID " + imageId + ": " + e.getMessage());
+                }
             }
 
             shoesRepo.delete(shoes);
         }
 
         return "redirect:/shoes";
+    }
+    
+    // Metodo helper per generare nomi file unici
+    private String generateUniqueFileName(String originalFileName) {
+        if (originalFileName == null || originalFileName.isEmpty()) {
+            originalFileName = "image.jpg";
+        }
+        
+        String timestamp = String.valueOf(new Date().getTime());
+        String extension = "";
+        
+        int lastDotIndex = originalFileName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            extension = originalFileName.substring(lastDotIndex);
+            originalFileName = originalFileName.substring(0, lastDotIndex);
+        }
+        
+        return timestamp + "_" + originalFileName + extension;
     }
 }

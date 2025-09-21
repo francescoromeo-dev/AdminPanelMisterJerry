@@ -1,161 +1,299 @@
 <!doctype html>
 <html lang="it" xmlns:th="https://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shoes manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/shoes-manager-style.css">
-  </head>
-  <body>
 
-    <div class="container-my-4">
-        <h1 class="text-center mb-3">Lista delle scarpe</h1>
-        
-        <!-- SEZIONE FILTRI -->
-        <div class="filters-section">
-          <form method="get" action="/shoes" class="filters-form">
-            <div class="filters-row">
-              <div class="filter-group">
-                <label for="season">Stagione:</label>
-                <select name="season" id="season" class="filter-select">
-                  <option value="">Tutte le stagioni</option>
-                  <option value="Autunno/Inverno" th:selected="${param.season != null and param.season[0] == 'Autunno/Inverno'}">Autunno/Inverno</option>
-                  <option value="Primavera/Estate" th:selected="${param.season != null and param.season[0] == 'Primavera/Estate'}">Primavera/Estate</option>
-                </select>
-              </div>
-              
-              <div class="filter-group">
-                <label for="category">Categoria:</label>
-                <select name="category" id="category" class="filter-select">
-                  <option value="">Tutte le categorie</option>
-                  <option value="Primi passi" th:selected="${param.category != null and param.category[0] == 'Primi passi'}">Primi passi</option>
-                  <option value="Cerimonia bambini" th:selected="${param.category != null and param.category[0] == 'Cerimonia bambini'}">Cerimonia bambini</option>
-                  <option value="Bambini" th:selected="${param.category != null and param.category[0] == 'Bambini'}">Bambini</option>
-                </select>
-              </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shoes manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/shoes-manager-style.css">
 
-              <!-- FILTRO COLORE -->
-              <div class="filter-group">
-                <label for="color">Colore:</label>
-                <select name="color" id="color" class="filter-select">
-                  <option value="">Tutti i colori</option>
-                  <option value="Nero" th:selected="${param.color != null and param.color[0] == 'Nero'}">Nero</option>
-                  <option value="Marrone" th:selected="${param.color != null and param.color[0] == 'Marrone'}">Marrone</option>
-                  <option value="Blu" th:selected="${param.color != null and param.color[0] == 'Blu'}">Blu</option>
-                  <option value="Rosso" th:selected="${param.color != null and param.color[0] == 'Rosso'}">Rosso</option>
-                  <option value="Bianco" th:selected="${param.color != null and param.color[0] == 'Bianco'}">Bianco</option>
-                  <option value="Grigio" th:selected="${param.color != null and param.color[0] == 'Grigio'}">Grigio</option>
-                  <option value="Beige" th:selected="${param.color != null and param.color[0] == 'Beige'}">Beige</option>
-                  <option value="Verde" th:selected="${param.color != null and param.color[0] == 'Verde'}">Verde</option>
-                  <option value="Rosa" th:selected="${param.color != null and param.color[0] == 'Rosa'}">Rosa</option>
-                  <option value="Giallo" th:selected="${param.color != null and param.color[0] == 'Giallo'}">Giallo</option>
-                  <option value="Multicolore" th:selected="${param.color != null and param.color[0] == 'Multicolore'}">Multicolore</option>
-                </select>
-              </div>
-              
-              <div class="filter-actions">
-                <button type="submit" class="btn btn-filter">Filtra</button>
-                <a href="/shoes" class="btn btn-reset">Reset</a>
-              </div>
-            </div>
-          </form>
-        </div>
+</head>
 
-        <!-- PULSANTE AGGIUNGI -->
-        <div class="action-section">
-          <a class="btn btn-primary" href="/shoes/shoes-create">Aggiungi nuova scarpa</a>
-          
-          <!-- CONTATORE RISULTATI -->
-          <div class="results-count">
-            <span th:text="'Trovate ' + ${shoes.size()} + ' scarpe'">Trovate X scarpe</span>
+<body>
+
+  <div class="container-my-4">
+    <h1 class="text-center mb-3">Lista delle scarpe</h1>
+
+    <!-- SEZIONE FILTRI -->
+    <div class="filters-section">
+      <form method="get" action="/shoes" class="filters-form">
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="season">Stagione:</label>
+            <select name="season" id="season" class="filter-select">
+              <option value="">Tutte le stagioni</option>
+              <option value="Autunno/Inverno"
+                th:selected="${param.season != null and param.season[0] == 'Autunno/Inverno'}">Autunno/Inverno</option>
+              <option value="Primavera/Estate"
+                th:selected="${param.season != null and param.season[0] == 'Primavera/Estate'}">Primavera/Estate
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="category">Categoria:</label>
+            <select name="category" id="category" class="filter-select">
+              <option value="">Tutte le categorie</option>
+              <option value="Primi passi"
+                th:selected="${param.category != null and param.category[0] == 'Primi passi'}">Primi passi</option>
+              <option value="Cerimonia bambini"
+                th:selected="${param.category != null and param.category[0] == 'Cerimonia bambini'}">Cerimonia bambini
+              </option>
+              <option value="Bambini" th:selected="${param.category != null and param.category[0] == 'Bambini'}">Bambini
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-actions">
+            <button type="submit" class="btn btn-filter">Filtra</button>
+            <a href="/shoes" class="btn btn-reset">Reset</a>
           </div>
         </div>
-
-        <table class="table mt-4">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Immagine</th>
-              <th>Codice scarpa</th>
-              <th>Colori disponibili</th> <!-- COLONNA MODIFICATA -->
-              <th>Stagione</th>
-              <th>Categoria</th>
-              <th>Data di creazione</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody class="table-group-divider">
-            <tr th:each="shoes : ${shoes}">
-              <td th:text="${shoes.id}"></td>
-              
-              <!-- Visualizzazione immagine -->
-              <td>
-                <img th:if="${shoes.imageFileName != null and !#strings.isEmpty(shoes.imageFileName)}" 
-                     th:src="@{'/images/' + ${shoes.imageFileName}}" 
-                     alt="Foto scarpa" 
-                     class="shoe-image">
-                
-                <div th:unless="${shoes.imageFileName != null and !#strings.isEmpty(shoes.imageFileName)}" 
-                     class="no-image">
-                  Nessuna<br>immagine
-                </div>
-              </td>
-              
-              <td th:text="${shoes.code}"></td>
-              
-              <!-- NUOVA CELLA PER I COLORI MULTIPLI -->
-              <td>
-                <div class="colors-display">
-                  <span th:each="color, iterStat : ${shoes.colorsList}" 
-                        class="color-tag"
-                        th:text="${color}"
-                        th:classappend="${color == 'Nero'} ? 'color-nero' : 
-                                       (${color == 'Marrone'} ? 'color-marrone' : 
-                                       (${color == 'Blu'} ? 'color-blu' : 
-                                       (${color == 'Rosso'} ? 'color-rosso' : 
-                                       (${color == 'Bianco'} ? 'color-bianco' : 
-                                       (${color == 'Grigio'} ? 'color-grigio' : 
-                                       (${color == 'Beige'} ? 'color-beige' : 
-                                       (${color == 'Verde'} ? 'color-verde' : 
-                                       (${color == 'Rosa'} ? 'color-rosa' : 
-                                       (${color == 'Giallo'} ? 'color-giallo' : 'color-default')))))))))">
-                  </span>
-                  <div th:if="${shoes.colorsList.empty}" class="no-colors">
-                    Nessun colore
-                  </div>
-                </div>
-              </td>
-              
-              <td th:text="${shoes.season}"></td>
-              <td th:text="${shoes.category}"></td>
-              <td th:text="${shoes.createdAt.toString().substring(0,10)}"></td>
-
-              <td style="white-space:nowrap">
-                <a class="btn btn-primary btn-sm" th:href="@{/shoes/shoes-edit(id=${shoes.id})}">
-                  Modifica
-                </a>
-
-                <a class="btn btn-danger btn-sm" th:href="@{/shoes/delete(id=${shoes.id})}" onclick="return confirm('Sei sicuro di voler eliminare questa scarpa?')">
-                  Elimina
-                </a>
-              </td>
-            </tr>
-            
-            <!-- MESSAGGIO NESSUN RISULTATO -->
-            <tr th:if="${shoes.isEmpty()}">
-              <td colspan="8" class="no-results"> <!-- Mantiene colspan="8" per le 8 colonne -->
-                <div class="no-results-content">
-                  <span>🔭</span>
-                  <p>Nessuna scarpa trovata con i filtri selezionati</p>
-                  <a href="/shoes" class="btn btn-reset btn-sm">Rimuovi filtri</a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-  </body>
+    <!-- PULSANTE AGGIUNGI -->
+    <div class="action-section">
+      <a class="btn btn-primary" href="/shoes/shoes-create">Aggiungi nuova scarpa</a>
+
+      <!-- CONTATORE RISULTATI -->
+      <div class="results-count">
+        <span th:text="'Trovate ' + ${shoes.size()} + ' scarpe'">Trovate X scarpe</span>
+      </div>
+    </div>
+
+    <table class="table mt-4">
+      <thead>
+        <tr>
+          <th>Immagini</th>
+          <th>Codice scarpa</th>
+          <th>Stagione</th>
+          <th>Categoria</th>
+          <th>Data di creazione</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        <tr th:each="shoes : ${shoes}">
+
+          <!-- Visualizzazione multiple immagini con click per aprire modal -->
+          <td>
+            <div class="images-gallery" th:if="${shoes.hasImages()}">
+              <div class="gallery-container" th:attr="data-image-ids=${#strings.listJoin(shoes.imageIdsList, ',')}, 
+                               data-shoe-code=${shoes.code}" onclick="openImageModal(this)">
+
+                <!-- Mostra fino a 3 immagini inline usando gli ID dal database -->
+                <img th:each="imageId, iterStat : ${shoes.imageIdsList}" th:if="${iterStat.index < 3}"
+                  th:src="@{'/images/' + ${imageId}}" alt="Foto scarpa" class="shoe-image-gallery">
+
+                <!-- Indicatore se ci sono più di 3 immagini -->
+                <div th:if="${shoes.imagesCount > 3}" class="more-images-indicator">
+                  <span th:text="'+' + (${shoes.imagesCount - 3})">+X</span>
+                </div>
+
+                <!-- Contatore immagini -->
+                <div class="images-count">
+                  <span th:text="${shoes.imagesCount} + ' foto'">X foto</span>
+                </div>
+              </div>
+            </div>
+
+            <div th:unless="${shoes.hasImages()}" class="no-image">
+              Nessuna<br>immagine
+            </div>
+          </td>
+
+          <td th:text="${shoes.code}"></td>
+          <td th:text="${shoes.season}"></td>
+          <td th:text="${shoes.category}"></td>
+          <td th:text="${shoes.createdAt.toString().substring(0,10)}"></td>
+
+          <td style="white-space:nowrap">
+            <a class="btn btn-primary btn-sm" th:href="@{/shoes/shoes-edit(id=${shoes.id})}">
+              Modifica
+            </a>
+
+            <a class="btn btn-danger btn-sm" th:href="@{/shoes/delete(id=${shoes.id})}"
+              onclick="return confirm('Sei sicuro di voler eliminare questa scarpa?')">
+              Elimina
+            </a>
+          </td>
+        </tr>
+
+        <!-- MESSAGGIO NESSUN RISULTATO -->
+        <tr th:if="${shoes.isEmpty()}">
+          <td colspan="6" class="no-results">
+            <div class="no-results-content">
+              <span>🔭</span>
+              <p>Nessuna scarpa trovata con i filtri selezionati</p>
+              <a href="/shoes" class="btn btn-reset btn-sm">Rimuovi filtri</a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL PER VISUALIZZARE LE IMMAGINI -->
+  <div id="imageModal" class="image-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Visualizza immagini</h5>
+        <button class="close-btn" onclick="closeImageModal()" title="Chiudi">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="image-gallery">
+          <div class="main-image-container">
+            <img id="mainImage" class="main-image" src="" alt="Immagine scarpa">
+            <button class="nav-button prev" onclick="previousImage()" title="Immagine precedente">‹</button>
+            <button class="nav-button next" onclick="nextImage()" title="Immagine successiva">›</button>
+            <div class="image-counter">
+              <span id="imageCounter">1 / 1</span>
+            </div>
+          </div>
+          <div class="thumbnails-container" id="thumbnailsContainer">
+            <!-- Le thumbnail verranno generate dinamicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"></script>
+
+  <script>
+    let currentImageIds = [];
+    let currentImageIndex = 0;
+    let currentShoeCode = '';
+
+    function openImageModal(element) {
+      const imageIdsString = element.getAttribute('data-image-ids');
+      const shoeCode = element.getAttribute('data-shoe-code');
+
+      currentImageIds = imageIdsString.split(',').filter(id => id.trim() !== '').map(id => id.trim());
+      currentShoeCode = shoeCode;
+      currentImageIndex = 0;
+
+      if (currentImageIds.length === 0) {
+        return;
+      }
+
+      // Aggiorna il titolo del modal
+      document.getElementById('modalTitle').textContent = `Immagini di ${shoeCode}`;
+
+      // Mostra il modal
+      const modal = document.getElementById('imageModal');
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+
+      // Aggiunge/rimuove classe per gestire i pulsanti di navigazione
+      const mainContainer = document.querySelector('.main-image-container');
+      if (currentImageIds.length === 1) {
+        mainContainer.classList.add('single-image');
+      } else {
+        mainContainer.classList.remove('single-image');
+      }
+
+      // Carica la prima immagine
+      loadImage(0);
+      generateThumbnails();
+    }
+
+    function closeImageModal() {
+      const modal = document.getElementById('imageModal');
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function loadImage(index) {
+      if (index < 0 || index >= currentImageIds.length) return;
+
+      currentImageIndex = index;
+      const imagePath = `/images/${currentImageIds[index]}`;
+
+      const mainImage = document.getElementById('mainImage');
+      mainImage.src = imagePath;
+
+      // Aggiorna il contatore
+      document.getElementById('imageCounter').textContent =
+        `${currentImageIndex + 1} / ${currentImageIds.length}`;
+
+      // Aggiorna le thumbnails attive
+      updateThumbnailsActiveState();
+    }
+
+    function previousImage() {
+      const newIndex = (currentImageIndex - 1 + currentImageIds.length) % currentImageIds.length;
+      loadImage(newIndex);
+    }
+
+    function nextImage() {
+      const newIndex = (currentImageIndex + 1) % currentImageIds.length;
+      loadImage(newIndex);
+    }
+
+    function generateThumbnails() {
+      const container = document.getElementById('thumbnailsContainer');
+      container.innerHTML = '';
+
+      currentImageIds.forEach((imageId, index) => {
+        const thumbnail = document.createElement('img');
+        thumbnail.src = `/images/${imageId}`;
+        thumbnail.alt = `Thumbnail ${index + 1}`;
+        thumbnail.className = 'thumbnail';
+        thumbnail.onclick = () => loadImage(index);
+
+        if (index === currentImageIndex) {
+          thumbnail.classList.add('active');
+        }
+
+        container.appendChild(thumbnail);
+      });
+    }
+
+    function updateThumbnailsActiveState() {
+      const thumbnails = document.querySelectorAll('.thumbnail');
+      thumbnails.forEach((thumb, index) => {
+        thumb.classList.toggle('active', index === currentImageIndex);
+      });
+    }
+
+    // Chiudi il modal quando si clicca fuori dal contenuto
+    document.getElementById('imageModal').onclick = function (event) {
+      if (event.target === this) {
+        closeImageModal();
+      }
+    };
+
+    // Supporto per i tasti freccia
+    document.addEventListener('keydown', function (event) {
+      const modal = document.getElementById('imageModal');
+      if (!modal.classList.contains('show')) return;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          previousImage();
+          break;
+        case 'ArrowRight':
+          nextImage();
+          break;
+        case 'Escape':
+          closeImageModal();
+          break;
+      }
+    });
+
+    // Previene il comportamento predefinito del drag sulle immagini
+    document.addEventListener('dragstart', function (e) {
+      if (e.target.tagName === 'IMG') {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+
 </html>

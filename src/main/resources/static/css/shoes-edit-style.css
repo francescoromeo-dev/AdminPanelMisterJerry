@@ -109,20 +109,90 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
   color: #1f2937;
 }
 
-/* Immagine corrente */
+/* NUOVI STILI PER MULTIPLE IMMAGINI CORRENTI */
+
+/* Container per le immagini correnti multiple */
+.current-images-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+/* Wrapper per ogni immagine corrente */
+.current-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Immagini correnti multiple */
 .current-image {
-  max-width: 200px !important;
-  max-height: 200px !important;
+  max-width: 150px !important;
+  max-height: 150px !important;
   object-fit: cover;
   border-radius: 8px !important;
   border: 1px solid #e5e7eb !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
+  display: block;
 }
 
 .current-image:hover {
   transform: scale(1.02);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Label sotto ogni immagine corrente */
+.image-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* STILI PER LE NUOVE IMMAGINI DI ANTEPRIMA */
+
+/* Container per l'anteprima delle nuove immagini */
+.preview-container {
+  margin-top: 1rem !important;
+  display: none; /* Inizialmente nascosto */
+}
+
+/* Wrapper per ogni singola immagine di anteprima */
+.image-preview-wrapper {
+  display: inline-block;
+  margin: 0.5rem;
+  position: relative;
+  vertical-align: top;
+}
+
+/* Stile per le immagini di anteprima */
+.image-preview {
+  max-width: 150px;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  display: block;
+}
+
+.image-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Label sotto ogni immagine di anteprima */
+.image-preview-wrapper div {
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 0.25rem;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 /* Testo di aiuto */
@@ -183,8 +253,8 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
   display: grid !important;
 }
 
-/* Sezione immagine corrente */
-.row.mb-3:has(.current-image) {
+/* Sezione immagini correnti - styling speciale */
+.row.mb-3:has(.current-images-container) {
   background: #f9fafb;
   border-radius: 10px;
   padding: 1.5rem;
@@ -217,12 +287,31 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
     margin-bottom: 0.5rem;
   }
   
+  /* Responsive per le immagini correnti */
   .current-image {
-    max-width: 150px !important;
-    max-height: 150px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
   }
   
-  .row.mb-3:has(.current-image) {
+  .current-images-container {
+    gap: 0.5rem;
+  }
+  
+  .current-image-wrapper {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Responsive per le anteprime */
+  .image-preview {
+    max-width: 120px;
+    max-height: 120px;
+  }
+  
+  .image-preview-wrapper {
+    margin: 0.25rem;
+  }
+  
+  .row.mb-3:has(.current-images-container) {
     margin: 1rem -0.5rem;
     padding: 1rem;
   }
@@ -253,7 +342,7 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
 /* Miglioramenti per la row dei form */
 .row.mb-3 {
   margin-bottom: 1.5rem !important;
-  align-items: center;
+  align-items: flex-start; /* Cambiato per supportare le multiple immagini */
 }
 
 /* Spacing ottimizzato */
@@ -280,4 +369,22 @@ input[type="file"].form-control::-webkit-file-upload-button:hover {
   border-left: 3px solid #e5e7eb;
   padding-left: 1rem;
   margin-left: 0;
+}
+
+/* Stile speciale per il container delle anteprime quando è visibile */
+.preview-container[style*="display: block"] {
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Intestazione per le nuove immagini */
+.preview-container div[style*="background: #f9fafb"] {
+  background: #f9fafb !important;
+  border-radius: 8px !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 1rem !important;
+  margin: 1rem 0 !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
 }

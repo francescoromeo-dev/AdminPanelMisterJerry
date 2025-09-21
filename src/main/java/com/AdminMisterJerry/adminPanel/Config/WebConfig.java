@@ -9,8 +9,14 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Configura Spring per servire le immagini dalla cartella public/images/
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:public/images/");
+        // RIMUOVERE QUESTA CONFIGURAZIONE - Le immagini ora vengono servite dal database
+        // Non abbiamo più bisogno di servire file statici da una cartella locale
+        
+        // Manteniamo solo la configurazione per i file CSS e JS statici se necessari
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("classpath:/static/css/");
+                
+        registry.addResourceHandler("/js/**")
+                .addResourceLocations("classpath:/static/js/");
     }
 }

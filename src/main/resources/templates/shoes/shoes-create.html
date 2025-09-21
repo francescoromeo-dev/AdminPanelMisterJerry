@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/shoes-create-style.css">
-    <script src="/js/shoes-create-script.js" defer></script>
 </head>
 
 <body>
@@ -16,7 +15,7 @@
         <div class="row">
             <div class="col-md-8 mx-auto rounded border p-4">
                 <h2 class="text-center mb-5">Nuova scarpa</h2>
-                <!-- IMPORTANTE: aggiunto enctype="multipart/form-data" per l'upload -->
+                <!-- IMPORTANTE: enctype="multipart/form-data" per l'upload al database -->
                 <form method="post" action="/shoes/shoes-create" enctype="multipart/form-data" th:object="${shoesDto}">
 
                     <div class="row mb-3">
@@ -25,62 +24,6 @@
                             <input class="form-control" th:field="*{code}">
                             <p th:if="${#fields.hasErrors('code')}" class="text-danger"
                                 th:errors="*{code}"></p>
-                        </div>
-                    </div>
-
-                    <!-- NUOVO CAMPO COLORI MULTIPLI -->
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Colori disponibili</label>
-                        <div class="col-sm-8">
-                            <div class="colors-selection">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Nero" th:field="*{colors}" id="color-nero">
-                                    <label class="form-check-label" for="color-nero">Nero</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Marrone" th:field="*{colors}" id="color-marrone">
-                                    <label class="form-check-label" for="color-marrone">Marrone</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Blu" th:field="*{colors}" id="color-blu">
-                                    <label class="form-check-label" for="color-blu">Blu</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Rosso" th:field="*{colors}" id="color-rosso">
-                                    <label class="form-check-label" for="color-rosso">Rosso</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Bianco" th:field="*{colors}" id="color-bianco">
-                                    <label class="form-check-label" for="color-bianco">Bianco</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Grigio" th:field="*{colors}" id="color-grigio">
-                                    <label class="form-check-label" for="color-grigio">Grigio</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Beige" th:field="*{colors}" id="color-beige">
-                                    <label class="form-check-label" for="color-beige">Beige</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Verde" th:field="*{colors}" id="color-verde">
-                                    <label class="form-check-label" for="color-verde">Verde</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Rosa" th:field="*{colors}" id="color-rosa">
-                                    <label class="form-check-label" for="color-rosa">Rosa</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Giallo" th:field="*{colors}" id="color-giallo">
-                                    <label class="form-check-label" for="color-giallo">Giallo</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Multicolore" th:field="*{colors}" id="color-multicolore">
-                                    <label class="form-check-label" for="color-multicolore">Multicolore</label>
-                                </div>
-                            </div>
-                            <small class="form-text text-muted">Seleziona tutti i colori disponibili per questa scarpa</small>
-                            <p th:if="${#fields.hasErrors('colors')}" class="text-danger"
-                                th:errors="*{colors}"></p>
                         </div>
                     </div>
 
@@ -111,17 +54,21 @@
                         </div>
                     </div>
 
-                    <!-- Campo per l'upload dell'immagine con anteprima -->
+                    <!-- Campo per l'upload di multiple immagini che saranno salvate nel database -->
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Immagine</label>
+                        <label class="col-sm-4 col-form-label">Immagini</label>
                         <div class="col-sm-8">
-                            <input class="form-control" type="file" th:field="*{imageFile}" accept="image/*" id="imageInput">
-                            <p th:if="${#fields.hasErrors('imageFile')}" class="text-danger"
-                                th:errors="*{imageFile}"></p>
+                            <input class="form-control" type="file" name="imageFiles" accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/webp" multiple id="imageInput">
+                            <small class="form-text text-muted">
+                                Seleziona una o più immagini (tieni premuto Ctrl/Cmd per selezioni multiple)<br>
+                                <strong>Formati supportati:</strong> JPG, PNG, GIF, BMP, WEBP - <strong>Max:</strong> 10MB per file
+                            </small>
+                            <p th:if="${#fields.hasErrors('imageFiles')}" class="text-danger"
+                                th:errors="*{imageFiles}"></p>
                             
-                            <!-- Container per l'anteprima dell'immagine -->
-                            <div class="preview-container">
-                                <img id="imagePreview" class="image-preview" alt="Anteprima immagine">
+                            <!-- Container per l'anteprima delle immagini -->
+                            <div class="preview-container" id="imagePreviewContainer">
+                                <!-- Le anteprime verranno inserite qui via JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -140,8 +87,137 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
+
+    <!-- Script per anteprima multiple immagini e validazione -->
+    <script>
+        // Formati supportati (deve corrispondere al controller Java)
+        const SUPPORTED_FORMATS = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+        document.getElementById('imageInput').addEventListener('change', function (event) {
+            const files = event.target.files;
+            const container = document.getElementById('imagePreviewContainer');
+            
+            // Pulisce il container
+            container.innerHTML = '';
+            
+            if (files.length > 0) {
+                container.style.display = 'block';
+                
+                // Header informativo
+                const headerDiv = document.createElement('div');
+                headerDiv.style.cssText = 'margin-top: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd; margin-bottom: 1rem;';
+                headerDiv.innerHTML = `<strong style="color: #0369a1;">📁 File selezionati (${files.length}):</strong><br><small style="color: #0284c7;">Le immagini saranno salvate nel database MySQL</small>`;
+                container.appendChild(headerDiv);
+                
+                let validFiles = 0;
+                let invalidFiles = 0;
+                
+                Array.from(files).forEach((file, index) => {
+                    const isValidFormat = SUPPORTED_FORMATS.includes(file.type);
+                    const isValidSize = file.size <= MAX_FILE_SIZE;
+                    const isValid = isValidFormat && isValidSize;
+                    
+                    if (isValid) {
+                        validFiles++;
+                    } else {
+                        invalidFiles++;
+                    }
+                    
+                    if (file.type.startsWith('image/') && isValidFormat) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function (e) {
+                            const imageWrapper = document.createElement('div');
+                            imageWrapper.className = 'image-preview-wrapper';
+                            imageWrapper.style.cssText = 'display: inline-block; margin: 0.5rem; position: relative;';
+                            
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'image-preview';
+                            img.style.cssText = `max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid ${isValid ? '#10b981' : '#ef4444'}; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);`;
+                            
+                            const label = document.createElement('div');
+                            label.style.cssText = `font-size: 0.8rem; text-align: center; margin-top: 0.25rem; color: ${isValid ? '#059669' : '#dc2626'}; font-weight: 500;`;
+                            
+                            let labelText = `Foto ${index + 1}`;
+                            if (!isValidSize) {
+                                labelText += ` ⚠️ Troppo grande`;
+                            } else if (!isValidFormat) {
+                                labelText += ` ⚠️ Formato non supportato`;
+                            } else {
+                                labelText += ` ✅ Valida`;
+                            }
+                            label.textContent = labelText;
+                            
+                            imageWrapper.appendChild(img);
+                            imageWrapper.appendChild(label);
+                            container.appendChild(imageWrapper);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    } else {
+                        // File non immagine o formato non supportato
+                        const errorDiv = document.createElement('div');
+                        errorDiv.style.cssText = 'display: inline-block; margin: 0.5rem; padding: 1rem; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; color: #dc2626; font-size: 0.8rem; max-width: 150px;';
+                        errorDiv.innerHTML = `<strong>File ${index + 1}</strong><br>${file.name}<br>❌ ${!isValidFormat ? 'Formato non supportato' : 'Troppo grande'}`;
+                        container.appendChild(errorDiv);
+                    }
+                });
+                
+                // Riepilogo validazione
+                setTimeout(() => {
+                    const summaryDiv = document.createElement('div');
+                    summaryDiv.style.cssText = `margin-top: 1rem; padding: 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 500;`;
+                    
+                    if (invalidFiles === 0) {
+                        summaryDiv.style.cssText += 'background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46;';
+                        summaryDiv.innerHTML = `✅ Tutti i ${validFiles} file sono validi e pronti per il caricamento nel database`;
+                    } else {
+                        summaryDiv.style.cssText += 'background: #fee2e2; border: 1px solid #fecaca; color: #dc2626;';
+                        summaryDiv.innerHTML = `⚠️ ${validFiles} file validi, ${invalidFiles} file con problemi. Solo i file validi saranno caricati.`;
+                    }
+                    
+                    container.appendChild(summaryDiv);
+                }, 100);
+                
+            } else {
+                container.style.display = 'none';
+            }
+        });
+
+        // Validazione pre-submit
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('imageInput');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert('⚠️ Seleziona almeno un\'immagine prima di procedere.');
+                e.preventDefault();
+                return;
+            }
+            
+            let validFiles = 0;
+            for (let file of files) {
+                if (SUPPORTED_FORMATS.includes(file.type) && file.size <= MAX_FILE_SIZE) {
+                    validFiles++;
+                }
+            }
+            
+            if (validFiles === 0) {
+                alert('⚠️ Nessuna immagine valida selezionata. Controlla formato e dimensione dei file.');
+                e.preventDefault();
+                return;
+            }
+            
+            // Conferma caricamento
+            if (!confirm(`📤 Stai per caricare ${validFiles} immagine/i nel database. Procedere?`)) {
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
 
 </html>
