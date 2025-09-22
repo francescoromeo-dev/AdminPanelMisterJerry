@@ -1,8 +1,6 @@
 spring:
   application:
     name: adminControlPanel
-
-  # Configurazione del database PostgreSQL
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/adminControlPanel
@@ -14,7 +12,6 @@ spring:
       idle-timeout: 300000
       connection-timeout: 20000
       max-lifetime: 1200000
-
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -29,12 +26,20 @@ spring:
           batch_versioned_data: true
         order_inserts: true
         order_updates: true
-
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
-
+  jackson:
+    date-format: dd/MM/yyyy HH:mm:ss
+    time-zone: Europe/Rome
+    serialization:
+      write-dates-as-timestamps: false
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 3600
 logging:
   level:
     org:

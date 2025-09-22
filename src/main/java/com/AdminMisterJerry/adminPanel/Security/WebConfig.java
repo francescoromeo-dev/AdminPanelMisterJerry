@@ -1,4 +1,4 @@
-package com.AdminMisterJerry.adminPanel.Config;
+package com.AdminMisterJerry.adminPanel.Security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

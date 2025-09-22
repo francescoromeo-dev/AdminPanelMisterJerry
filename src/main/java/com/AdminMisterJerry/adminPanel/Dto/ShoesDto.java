@@ -1,4 +1,4 @@
-package com.AdminMisterJerry.adminPanel.Model;
+package com.AdminMisterJerry.adminPanel.Dto;
 
 import java.util.ArrayList;
 import java.util.List;
