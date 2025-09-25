@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.AdminMisterJerry.adminPanel.Model.Shoes;
 
+@Repository
 public interface ShoesRepository extends JpaRepository<Shoes, Integer>{
     
     // Trova per codice (ora deve essere univoco)
