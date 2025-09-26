@@ -23,10 +23,6 @@ public interface ShoesRepository extends JpaRepository<Shoes, Integer>{
     // Filtra per entrambi stagione e categoria (ordinato per ID discendente)
     List<Shoes> findBySeasonAndCategoryOrderByIdDesc(String season, String category);
     
-    // Rimosse tutte le query relative ai colori dato che non sono più necessarie
-    
-    // METODI OPZIONALI per ricerche più flessibili (case-insensitive)
-    
     // Ricerca parziale per stagione (contiene la stringa)
     List<Shoes> findBySeasonContainingIgnoreCaseOrderByIdDesc(String season);
     
